@@ -10,7 +10,7 @@ Developed completely from scratch within an 8-day timeline, this application foc
 - **Secured Handshakes:** Applied cryptographic session management for basic identity routing.
 
 ## 📸 Application Interface
-![Application Preview](./screenshot.png)
+![Application Preview](screenshot.png)
 
 ## 🛠️ Implementation Stack
 - **Frontend:** React (Vite), JavaScript (ES6+), clean CSS
