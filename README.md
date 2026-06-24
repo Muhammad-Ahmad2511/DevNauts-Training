@@ -1,4 +1,4 @@
-# Phase 1: Real-Time MERN Chat Application (DevNauts Training) 💬
+#  Real-Time MERN Chat Application (DevNauts Training) 💬
 
 An independent, foundational project completed during **Week 1 (8-Day Sprint)** of the DevNauts Internship. The primary objective of this phase was to gain hands-on exposure to the MERN stack, user authentication, and real-time communication architectures, laying the structural groundwork for the advanced RAG chat interfaces in subsequent phases.
 
