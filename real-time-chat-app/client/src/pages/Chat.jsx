@@ -1,23 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 
-const socket = io('http://localhost:5000');
-
 export default function Chat({ user }) {
   const [messages, setMessages] = useState([]);
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    // Tell server who just joined — triggers load-messages
-    socket.emit('join', { username: user.username });
+    const token = localStorage.getItem('token');
+    const socket = io('http://localhost:5000', {
+      auth: { token },
+    });
+    socketRef.current = socket;
 
-    // Load saved messages from MongoDB
+    socket.on('connect', () => {
+      socket.emit('join');
+    });
+
     socket.on('load-messages', (msgs) => {
       setMessages(msgs);
     });
 
-    // Receive new real-time messages
     socket.on('receive-message', (msg) => {
       setMessages(prev => [...prev, msg]);
     });
@@ -25,11 +29,13 @@ export default function Chat({ user }) {
     return () => {
       socket.off('load-messages');
       socket.off('receive-message');
+      socket.disconnect();
+      socketRef.current = null;
     };
-  }, []);
+  }, [user.username]);
 
   const sendMessage = (text) => {
-    socket.emit('send-message', { text, sender: user.username });
+    socketRef.current?.emit('send-message', { text });
   };
 
   return (

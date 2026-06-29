@@ -3,10 +3,24 @@ const bcrypt   = require('bcryptjs');
 const jwt      = require('jsonwebtoken');
 const User     = require('../models/user');
 
+function parseCredentials(body) {
+  const { username, password } = body;
+  if (typeof username !== 'string' || typeof password !== 'string') {
+    return { error: 'Username and password must be strings' };
+  }
+  const trimmedUsername = username.trim();
+  if (!trimmedUsername || !password) {
+    return { error: 'Username and password are required' };
+  }
+  return { username: trimmedUsername, password };
+}
+
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const parsed = parseCredentials(req.body);
+    if (parsed.error) return res.status(400).json({ error: parsed.error });
+    const { username, password } = parsed;
 
     // Check if user already exists
     const existing = await User.findOne({ username });
@@ -25,7 +39,9 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const parsed = parseCredentials(req.body);
+    if (parsed.error) return res.status(400).json({ error: parsed.error });
+    const { username, password } = parsed;
 
     const user = await User.findOne({ username });
     if (!user) return res.status(400).json({ error: 'User not found' });
